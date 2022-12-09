@@ -1,16 +1,73 @@
+const scan = (string, pattern, callback) => {
+  let result = ""
 
-import { split } from './node_modules/shellwords/dist/esm/index.js'
+  while (string.length > 0) {
+    const match = string.match(pattern)
 
-console.log(split)
+    if (match && match.index != null && match[0] != null) {
+      result += string.slice(0, match.index)
+      result += callback(match)
+      string = string.slice(match.index + match[0].length)
+    } else {
+      result += string
+      string = ""
+    }
+  }
 
-// TODO -F, --form
-// TODO --data-binary
-// TODO --data-urlencode
-// TODO -r, --range
+  return result
+}
 
 /**
- * Attempt to parse the given curl string.
+ * Splits a string into an array of tokens in the same way the UNIX Bourne shell does.
+ *
+ * @param line A string to split.
+ * @returns An array of the split tokens.
  */
+const split = (line = "") => {
+  const words = []
+  let field = ""
+
+  scan(
+    line,
+    /\s*(?:([^\s\\'"]+)|'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)"|(\\.?)|(\S))(\s|$)?/,
+    (match) => {
+      const [_raw, word, sq, dq, escape, garbage, separator] = match
+
+      // if (!garbage) {
+      //   throw new Error(`Unmatched quote: ${line}`)
+      // }
+
+      if (word) {
+        field += word
+      } else {
+        let addition
+
+        if (sq) {
+          addition = sq
+        } else if (dq) {
+          addition = dq
+        } else if (escape) {
+          addition = escape
+        }
+
+        if (addition) {
+          field += addition.replace(/\\(?=.)/, "")
+        }
+      }
+
+      if (separator != null) {
+        words.push(field)
+        field = ""
+      }
+    }
+  )
+
+  if (field) {
+    words.push(field)
+  }
+
+  return words
+}
 
 export default function(s) {
   if (0 != s.indexOf('curl ')) return
@@ -22,39 +79,39 @@ export default function(s) {
     switch (true) {
       case isURL(arg):
         out.url = arg
-        break;
+        break
 
       case arg == '-A' || arg == '--user-agent':
         state = 'user-agent'
-        break;
+        break
 
       case arg == '-H' || arg == '--header':
         state = 'header'
-        break;
+        break
 
       case arg == '-d' || arg == '--data' || arg == '--data-ascii' || arg == '--data-raw':
         state = 'data'
-        break;
+        break
 
       case arg == '-u' || arg == '--user':
         state = 'user'
-        break;
+        break
 
       case arg == '-I' || arg == '--head':
         out.method = 'HEAD'
-        break;
+        break
 
       case arg == '-X' || arg == '--request':
         state = 'method'
-        break;
+        break
 
       case arg == '-b' || arg =='--cookie':
         state = 'cookie'
-        break;
+        break
 
       case arg == '--compressed':
         out.header['Accept-Encoding'] = out.header['Accept-Encoding'] || 'deflate, gzip'
-        break;
+        break
 
       case !!arg:
         switch (state) {
@@ -62,11 +119,11 @@ export default function(s) {
             var field = parseField(arg)
             out.header[field[0]] = field[1]
             state = ''
-            break;
+            break
           case 'user-agent':
             out.header['User-Agent'] = arg
             state = ''
-            break;
+            break
           case 'data':
             if (out.method == 'GET' || out.method == 'HEAD') out.method = 'POST'
             out.header['Content-Type'] = out.header['Content-Type'] || 'application/x-www-form-urlencoded'
@@ -74,21 +131,21 @@ export default function(s) {
               ? out.body + '&' + arg
               : arg
             state = ''
-            break;
+            break
           case 'user':
             out.header['Authorization'] = 'Basic ' + btoa(arg)
             state = ''
-            break;
+            break
           case 'method':
             out.method = arg
             state = ''
-            break;
+            break
           case 'cookie':
             out.header['Set-Cookie'] = arg
             state = ''
-            break;
+            break
         }
-        break;
+        break
     }
   })
 

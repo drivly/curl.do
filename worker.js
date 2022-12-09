@@ -23,7 +23,7 @@ export const gettingStarted = [
 ]
 
 export const examples = {
-  listItems: 'https://curl.do/worker',
+  runCurl: 'https://curl.do/curl%20-X%20POST%20-H%20%22Content-Type%3A%20application%2Fjson%22%20-d%20\'%7B%22name%22%3A%22John%20Doe%22%7D\'%20https%3A%2F%2Fjsonplaceholder.typicode.com%2Fusers',
 }
 
 export default {
@@ -34,13 +34,45 @@ export default {
 
     if (!user.authenticated) return new Response(null, { status: 302, headers: { location: api.login } })
     
-    const cmd = parse(pathSegments.join('/').replaceAll(':/', '://'))
+    if (pathSegments[0] == 'api') return json({ api, gettingStarted, examples, user })
 
-    console.log(
-      'CMD',
-      pathSegments.join('/').replaceAll(':/', '://'),
-      cmd
-    )
+    if (pathSegments[0] == 'fetch') {
+      let url = decodeURIComponent(pathSegments.slice(1).join('/'))
+      if (!url.includes('://')) url = url.replaceAll(':/', '://')
+      
+      const cmd = parse(url)
+
+      const options = {
+        method: cmd.method,
+        headers: cmd.header,
+        body: cmd.body,
+      }
+
+      return new Response(`await fetch('${cmd.url}', ${JSON.stringify(options, null, 2)})`, { headers: { 'content-type': 'text/plain; charset=utf-8' } })
+    }
+
+    if (pathSegments[0] == 'json') {
+      let url = decodeURIComponent(pathSegments.slice(1).join('/'))
+      if (!url.includes('://')) url = url.replaceAll(':/', '://')
+      
+      const cmd = parse(url)
+
+      return json({
+        api,
+        data: {
+          link: `https://${hostname}/${encodeURIComponent(url)}`,
+          parsed: cmd
+        },
+        user,
+      })
+    }
+
+    let url = decodeURIComponent(pathSegments.join('/'))
+    if (!url.includes('://')) url = url.replaceAll(':/', '://')
+
+    console.log(url)
+  
+    const cmd = parse(url)
 
     const data = await fetch(cmd.url, {
       method: cmd.method,
