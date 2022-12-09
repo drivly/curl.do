@@ -1,0 +1,27 @@
+{
+  "name": "curl.do",
+  "version": "1.0.0",
+  "description": "Explore the API at: <https://curl.do/api>",
+  "main": "worker.js",
+  "module": "dist/index.mjs",
+  "scripts": {
+    "build": "esbuild ./worker.js --bundle --format=esm --outfile=dist/index.mjs  --loader:.html=text --define:process.env.HMAC_SECRET=\"'$( echo $HMAC_SECRET )'\"",
+    "dev": "export $(cat .env | xargs) && npx miniflare@latest --watch",
+    "format": "prettier --write '**/*.{js,css,json,md}'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drivly/curl.do.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/drivly/curl.do/issues"
+  },
+  "homepage": "https://github.com/drivly/curl.do#readme",
+  "dependencies": {
+    "curlconverter": "^4.4.1",
+    "esbuild": "^0.16.3",
+    "shellwords": "^1.0.1"
+  }
+}

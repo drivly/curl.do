@@ -1,3 +1,5 @@
+import parse from './curl.js'
+
 export const api = {
   icon: '🚀',
   name: 'CURL.do',
@@ -28,12 +30,25 @@ export default {
   fetch: async (req, env) => {
     const { user, hostname, pathname, rootPath, pathSegments, query } = await env.CTX.fetch(req).then(res => res.json())
     if (rootPath) return json({ api, gettingStarted, examples, user })
+    if (pathname.includes('favicon')) return new Response(null, { status: 302, headers: { location: 'https://uploads-ssl.webflow.com/60bee04bdb1a7a33432ce295/60ca2dd82fe6f273c60220ae_favicon_drivly.png' } })
+
+    if (!user.authenticated) return new Response(null, { status: 302, headers: { location: api.login } })
     
-    // TODO: Implement this
-    const [ resource, id ] = pathSegments
-    const data = { resource, id, hello: user.city }
+    const cmd = parse(pathSegments.join('/'))
+
+    console.log(
+      'CMD',
+      pathSegments.join('/'),
+      cmd
+    )
+
+    const data = await fetch(cmd.url, {
+      method: cmd.method,
+      headers: cmd.header,
+      body: cmd.body,
+    })
     
-    return json({ api, data, user })
+    return data
   }
 }
 
