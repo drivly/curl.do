@@ -38,7 +38,7 @@ export default {
 
     console.log(
       'CMD',
-      pathSegments.join('/'),
+      pathSegments.join('/').replaceAll(':/', '://'),
       cmd
     )
 
