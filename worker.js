@@ -34,7 +34,7 @@ export default {
 
     if (!user.authenticated) return new Response(null, { status: 302, headers: { location: api.login } })
     
-    const cmd = parse(pathSegments.join('/'))
+    const cmd = parse(pathSegments.join('/').replaceAll(':/', '://')))
 
     console.log(
       'CMD',
