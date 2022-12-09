@@ -28,6 +28,7 @@ export const examples = {
 
 export default {
   fetch: async (req, env) => {
+    const raw_url = req.url
     const { user, hostname, pathname, rootPath, pathSegments, query } = await env.CTX.fetch(req).then(res => res.json())
     if (rootPath) return json({ api, gettingStarted, examples, user })
     if (pathname.includes('favicon')) return new Response(null, { status: 302, headers: { location: 'https://uploads-ssl.webflow.com/60bee04bdb1a7a33432ce295/60ca2dd82fe6f273c60220ae_favicon_drivly.png' } })
@@ -37,7 +38,7 @@ export default {
     if (pathSegments[0] == 'api') return json({ api, gettingStarted, examples, user })
 
     if (pathSegments[0] == 'fetch') {
-      let url = decodeURIComponent(pathSegments.slice(1).join('/'))
+      let url = decodeURIComponent(pathSegments.slice(1).join('/')) + raw_url.split('?')[1]
       if (!url.includes('://')) url = url.replaceAll(':/', '://')
       
       const cmd = parse(url)
@@ -52,7 +53,7 @@ export default {
     }
 
     if (pathSegments[0] == 'json') {
-      let url = decodeURIComponent(pathSegments.slice(1).join('/'))
+      let url = decodeURIComponent(pathSegments.slice(1).join('/')) + raw_url.split('?')[1]
       if (!url.includes('://')) url = url.replaceAll(':/', '://')
       
       const cmd = parse(url)
@@ -67,7 +68,7 @@ export default {
       })
     }
 
-    let url = decodeURIComponent(pathSegments.join('/'))
+    let url = decodeURIComponent(pathSegments.join('/')) + raw_url.split('?')[1]
     if (!url.includes('://')) url = url.replaceAll(':/', '://')
 
     console.log(url)
