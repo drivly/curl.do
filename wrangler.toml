@@ -10,7 +10,7 @@ services = [
 ]
 
 kv_namespaces = [
-  { binding = "STORAGE", id = "0d0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c" }
+  { binding = "STORAGE", id = "cf01cf26328a4b1a80037507d5e9b47c" }
 ]
 
 [build]
