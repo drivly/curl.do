@@ -9,6 +9,10 @@ services = [
   { binding = "CTX", service = "ctx-do", environment = "production" }
 ]
 
+kv_namespaces = [
+  { binding = "STORAGE", id = "0d0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c" }
+]
+
 [build]
 command = "npm run build"
  

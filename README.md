@@ -1,30 +1,45 @@
-# CURL.do - CURL Parse & Fetch API
+# 🌠 CURL.do - CURL Parse & Fetch API
 
-Explore the API at: <https://curl.do/api>
+This primitive API allows you to parse and execute cURL statements. It also allows you to create and execute templates for cURL statements.
 
-```json
-{
-  "api": {
-    "icon": "🚀",
-    "name": "curl.do",
-    "description": "CURL Parse & Fetch API",
-    "url": "https://curl.do/api",
-    "type": "https://apis.do/utilities",
-    "endpoints": {
-      "listCategories": "https://curl.do/api",
-      "getCategory": "https://curl.do/:type"
-    },
-    "site": "https://curl.do",
-    "login": "https://curl.do/login",
-    "signup": "https://curl.do/signup",
-    "subscribe": "https://curl.do/subscribe",
-    "repo": "https://github.com/drivly/curl.do"
-  },
-  "examples": {
-    "listItems": "https://curl.do/worker"
-  }
-}
+### Routes
+##### `GET /:statement`
+Runs a CURL statement and returns the response.
+
+##### `GET /fetch/:statement`
+Generates a fetch handler for a CURL statement, including all of the headers and the correct body required to make the request.
+
+##### `GET /json/:statement`
+Returns the parsed JSON representation of the cURL statement.
+
+#### `POST /templates/:templateID`
+Creates a new template with the given ID and statement. The template should be submitted as the body of the request.
+
+For example:
+
+```bash
+curl -X POST https://curl.do/templates/my-template \
+  -H "Content-Type: text/plain" \
+  -d "curl -X POST https://api.example.com/<userID>/<hello-world>
 ```
+
+You can modify the template by including query parameters in all template requests. Submitting `?hello-world=foo&userID=bar` to the above template would result in the following request:
+
+```bash
+curl -X POST https://api.example.com/bar/foo
+```
+
+##### `GET /templates/:templateID`
+Returns the template's raw statement. Includes query parameter templating support.
+
+```bash
+curl -X GET https://curl.do/templates/my-template?hello-world=foo&userID=bar
+```
+
+##### `GET /templates/:templateID/fetch`
+##### `GET /templates/:templateID/json`
+##### `GET /templates/:templateID/execute`
+Same as the previous routes, but for templates. Includes query parameter templating support. Execute runs the template and returns the response.
 
 ## [Drivly Open](https://driv.ly/open) - [Accelerating Innovation through Open Source](https://blog.driv.ly/accelerating-innovation-through-open-source)
 
