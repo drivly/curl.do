@@ -38,7 +38,8 @@ export default {
     if (pathSegments[0] == 'api') return json({ api, gettingStarted, examples, user })
 
     if (pathSegments[0] == 'fetch') {
-      let url = decodeURIComponent(pathSegments.slice(1).join('/')) + raw_url.split('?')[1] ? raw_url.split('?')[1] : ''
+      let url = decodeURIComponent(pathSegments.slice(1).join('/')) + (raw_url.split('?')[1] ? raw_url.split('?')[1] : '')
+      console.log(url)
       if (!url.includes('://')) url = url.replaceAll(':/', '://')
       
       const cmd = parse(url)
@@ -53,7 +54,7 @@ export default {
     }
 
     if (pathSegments[0] == 'json') {
-      let url = decodeURIComponent(pathSegments.slice(1).join('/')) + raw_url.split('?')[1] ? raw_url.split('?')[1] : ''
+      let url = decodeURIComponent(pathSegments.slice(1).join('/')) + (raw_url.split('?')[1] ? raw_url.split('?')[1] : '')
       if (!url.includes('://')) url = url.replaceAll(':/', '://')
       
       const cmd = parse(url)
@@ -68,7 +69,7 @@ export default {
       })
     }
 
-    let url = decodeURIComponent(pathSegments.join('/')) + raw_url.split('?')[1] ? raw_url.split('?')[1] : ''
+    let url = decodeURIComponent(pathSegments.join('/')) + (raw_url.split('?')[1] ? raw_url.split('?')[1] : '')
     if (!url.includes('://')) url = url.replaceAll(':/', '://')
 
     console.log(url)
