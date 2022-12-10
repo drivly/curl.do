@@ -13,8 +13,8 @@ Generates a fetch handler for a CURL statement, including all of the headers and
 Returns the parsed JSON representation of the cURL statement.
 
 #### `POST /templates/:templateID`
-Creates a new template with the given ID and statement. The template should be submitted as the body of the request.  
-Templates are localized to the account that created them, meaning you must be authenticated to read the template later on.  
+Creates a new template with the given ID and statement. The template should be submitted as the body of the request.
+Templates are localized to the account that created them, meaning you must be authenticated to read the template later on.
 Since the query is passed to the cURL statement, you must use the Authorization header or use a browser manually.  
 
 For example:
