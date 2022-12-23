@@ -35,9 +35,9 @@ export default {
     if (rootPath) return json({ api, gettingStarted, examples, user })
     if (pathname.includes('favicon')) return new Response(null, { status: 302, headers: { location: 'https://uploads-ssl.webflow.com/60bee04bdb1a7a33432ce295/60ca2dd82fe6f273c60220ae_favicon_drivly.png' } })
 
-    if (!user.authenticated) return new Response(null, { status: 302, headers: { location: api.login } })
-    
     if (pathSegments[0] == 'api') return json({ api, gettingStarted, examples, user })
+
+    if (!user.authenticated) return new Response(null, { status: 302, headers: { location: api.login } })
 
     let url = decodeURIComponent(pathSegments.slice(1).join('/')) + (raw_url.split('?')[1] ? `?${raw_url.split('?')[1]}` : '')
     if (!url.includes('://')) url = url.replaceAll(':/', '://')
@@ -108,6 +108,8 @@ export default {
         url = url.replaceAll(regex, value)
       }
 
+      
+ 
       if (!pathSegments.length) {
         return new Response(url, { headers: { 'content-type': 'text/plain; charset=utf-8' } })
       }
@@ -156,6 +158,8 @@ export default {
     if (!url.includes('://')) url = url.replaceAll(':/', '://')
   
     const cmd = parse(url)
+
+    cmd.header['CF-Worker'] = 'test.do'
 
     const data = await fetch(cmd.url, {
       method: cmd.method,
